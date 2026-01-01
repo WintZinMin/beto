@@ -1,0 +1,50 @@
+# Development Dockerfile with debugging tools
+FROM golang:1.25-alpine AS development
+
+# Install development tools and dependencies
+RUN apk add --no-cache \
+    git \
+    ca-certificates \
+    tzdata \
+    make \
+    curl \
+    bash \
+    vim \
+    htop \
+    tree
+
+# Install Go development tools
+RUN go install github.com/air-verse/air@latest && \
+    go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest && \
+    go install golang.org/x/tools/cmd/goimports@latest && \
+    go install mvdan.cc/gofumpt@latest && \
+    go install honnef.co/go/tools/cmd/staticcheck@latest && \
+    go install github.com/go-delve/delve/cmd/dlv@latest && \
+    go install github.com/golang/mock/mockgen@latest
+
+# Create app directory
+WORKDIR /app
+
+# Copy go mod files
+COPY go.mod go.sum ./
+
+# Download dependencies
+RUN go mod download
+
+# Copy source code
+COPY . .
+
+# Create necessary directories
+RUN mkdir -p tmp logs uploads
+
+# Set environment variables for development
+ENV CGO_ENABLED=0
+ENV GOOS=linux
+ENV GOARCH=amd64
+ENV GO111MODULE=on
+
+# Expose ports
+EXPOSE 8080 2345
+
+# Default command for development
+CMD ["air", "-c", ".air.toml"]

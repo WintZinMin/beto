@@ -1,0 +1,361 @@
+# .golangci.yml - Configuration for golangci-lint
+run:
+  timeout: 5m
+  issues-exit-code: 1
+  tests: true
+  skip-dirs:
+    - vendor
+    - tmp
+    - build
+    - dist
+    - node_modules
+  skip-files:
+    - ".*\\.pb\\.go$"
+    - ".*_gen\\.go$"
+    - "mock_.*\\.go$"
+
+output:
+  format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+  uniq-by-line: true
+  sort-results: true
+
+linters-settings:
+  govet:
+    check-shadowing: true
+    settings:
+      printf:
+        funcs:
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Infof
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
+          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
+
+  golint:
+    min-confidence: 0
+
+  gocyclo:
+    min-complexity: 15
+
+  maligned:
+    suggest-new: true
+
+  dupl:
+    threshold: 100
+
+  goconst:
+    min-len: 2
+    min-occurrences: 2
+
+  depguard:
+    list-type: blacklist
+    packages:
+      - github.com/sirupsen/logrus
+    packages-with-error-message:
+      - github.com/sirupsen/logrus: "logging is allowed only by logutils.Log"
+
+  misspell:
+    locale: US
+
+  lll:
+    line-length: 140
+
+  goimports:
+    local-prefixes: github.com/darkcloud/beto
+
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - experimental
+      - opinionated
+      - performance
+      - style
+    disabled-checks:
+      - dupImport # https://github.com/go-critic/go-critic/issues/845
+      - ifElseChain
+      - octalLiteral
+      - whyNoLint
+      - wrapperFunc
+
+  funlen:
+    lines: 100
+    statements: 50
+
+  gocognit:
+    min-complexity: 15
+
+  nestif:
+    min-complexity: 4
+
+  gomnd:
+    settings:
+      mnd:
+        checks: argument,case,condition,operation,return,assign
+        ignored-numbers: 0,1,2,3
+        ignored-functions: strings.SplitN
+
+  gomodguard:
+    allowed:
+      modules: []
+      domains: []
+    blocked:
+      modules: []
+      versions: []
+      local_replace_directives: true
+
+  godox:
+    keywords:
+      - NOTE
+      - OPTIMIZE
+      - HACK
+
+  dogsled:
+    max-blank-identifiers: 2
+
+  whitespace:
+    multi-if: false
+    multi-func: false
+
+  wsl:
+    strict-append: true
+    allow-assign-and-call: true
+    allow-multiline-assign: true
+    allow-cuddle-declarations: false
+    allow-trailing-comment: false
+    force-case-trailing-whitespace: 0
+    force-err-cuddling: false
+    allow-separated-leading-comment: false
+
+  testpackage:
+    skip-regexp: (export|internal)_test\.go
+
+  nolintlint:
+    allow-leading-space: true
+    allow-unused: false
+    require-explanation: false
+    require-specific: false
+
+  revive:
+    min-confidence: 0
+    rules:
+      - name: atomic
+      - name: line-length-limit
+        arguments: [140]
+      - name: time-naming
+      - name: var-declaration
+      - name: unexported-return
+      - name: errorf
+      - name: blank-imports
+      - name: context-as-argument
+      - name: context-keys-type
+      - name: dot-imports
+      - name: error-return
+      - name: error-strings
+      - name: error-naming
+      - name: exported
+      - name: increment-decrement
+      - name: var-naming
+      - name: package-comments
+      - name: range
+      - name: receiver-naming
+      - name: time-naming
+      - name: unexported-return
+      - name: indent-error-flow
+      - name: superfluous-else
+
+  exhaustive:
+    check-generated: false
+    default-signifies-exhaustive: false
+
+  cyclop:
+    max-complexity: 15
+    package-average: 0.0
+    skip-tests: false
+
+  errorlint:
+    errorf: true
+
+  forbidigo:
+    forbid:
+      - ^print.*$
+      - 'fmt\.Print.*'
+    exclude_godoc_examples: false
+
+  ifshort:
+    max-decl-lines: 1
+    max-decl-chars: 30
+
+  importas:
+    no-unaliased: true
+    alias:
+      - pkg: github.com/pkg/errors
+        alias: errors
+
+  makezero:
+    always: false
+
+  predeclared:
+    ignore: ""
+    q: false
+
+  promlinter:
+    strict: false
+    disabled-linters: []
+
+  rowserrcheck:
+    packages:
+      - github.com/jmoiron/sqlx
+
+  thelper:
+    test:
+      first: true
+      name: true
+      begin: true
+    benchmark:
+      first: true
+      name: true
+      begin: true
+    tb:
+      first: true
+      name: true
+      begin: true
+
+  tparallel:
+    ignoreMissing: false
+    ignoreMissingSubtests: false
+
+  unparam:
+    check-exported: false
+
+  varnamelen:
+    min-name-length: 1
+    ignore-names:
+      - err
+      - wg
+      - fs
+      - id
+      - ip
+      - db
+      - tx
+      - tt
+      - tc
+    ignore-decls:
+      - c echo.Context
+      - t testing.T
+      - f *foo.Bar
+      - e error
+      - i int
+      - const C
+      - T any
+      - m map[string]int
+
+linters:
+  disable-all: true
+  enable:
+    - bodyclose
+    - deadcode
+    - depguard
+    - dogsled
+    - dupl
+    - errcheck
+    - exportloopref
+    - exhaustive
+    - funlen
+    - gochecknoinits
+    - goconst
+    - gocritic
+    - gocyclo
+    - gofmt
+    - goimports
+    - gomnd
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - lll
+    - misspell
+    - nakedret
+    - noctx
+    - nolintlint
+    - rowserrcheck
+    - staticcheck
+    - structcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - varcheck
+    - whitespace
+    - revive
+    - cyclop
+    - errorlint
+    - forbidigo
+    - ifshort
+    - makezero
+    - predeclared
+    - thelper
+    - tparallel
+    - varnamelen
+    - wsl
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gomnd
+        - funlen
+        - gocyclo
+        - errcheck
+        - dupl
+        - gosec
+        - varnamelen
+
+    - path: main\.go
+      linters:
+        - gochecknoinits
+
+    - path: pkg/
+      linters:
+        - depguard
+
+    - linters:
+        - staticcheck
+      text: "SA9003:"
+
+    - linters:
+        - lll
+      source: "^//go:generate "
+
+    - linters:
+        - gocritic
+      text: "unnecessaryDefer:"
+
+  exclude:
+    - 'declaration of "(err|ctx)" shadows declaration at'
+    - 'shadow: declaration of "err" shadows declaration'
+    - 'shadow: declaration of "ctx" shadows declaration'
+
+  exclude-use-default: false
+  max-issues-per-linter: 50
+  max-same-issues: 3
+  new: false
+
+severity:
+  default-severity: error
+  case-sensitive: false
+  rules:
+    - linters:
+        - dupl
+      severity: info
+    - linters:
+        - gocritic
+      severity: info
+    - linters:
+        - gomnd
+      severity: info
+    - linters:
+        - lll
+      severity: info
